@@ -31,7 +31,7 @@ public class Batch {
             // System.out.println(createSql(ltIdPrefix, gtIdPrefix, UPDATE, true));
             // System.out.println(createSql(ltIdPrefix, gtIdPrefix, SELECT, true));
             // System.out.println(createSql(ltIdPrefix, gtIdPrefix, SqlConstant.INSERT, true));
-            String sql = createSql(ltIdPrefix, gtIdPrefix, SqlConstant.INSERT, true);
+            String sql = createSql(ltIdPrefix, gtIdPrefix, SqlConstant.UPDATE, true);
             if (sql != null && !"".equals(sql.trim())) {
                 writeToChannel(buffer, channel, sql);
                 // 为下一次put做准备
@@ -86,11 +86,20 @@ public class Batch {
         // update, select, insert into
         if (SqlConstant.UPDATE.equals(operateType)) {
             sb.append(SqlConstant.UPDATE)
+                    .append("\n")
                     .append(" ")
                     .append(SqlConstant.TABLE_NAME)
-                    .append(" SET")
+                    .append("\n")
+                    .append(" SET\n")
                     // 需要更新的字段,
-                    .append(" area_type = 1");
+                    .append(" `user_id_dept_audit` = user_id_audit,\n" +
+                            "\t`user_name_dept_audit` = user_name_audit,\n" +
+                            "\t`user_id_compliance_audit` = user_id_audit,\n" +
+                            "\t`user_name_compliance_audit` = user_name_audit,\n" +
+                            "\t`time_dept_audit` = time_audit,\n" +
+                            "\t`time_compliance_audit` = time_audit\n" +
+                            "where\n" +
+                            "\t`audit_stauts` = 2 and ");
         }
         if (SqlConstant.SELECT.equals(operateType)) {
             sb.append(SqlConstant.SELECT)
@@ -113,7 +122,7 @@ public class Batch {
 
         // where
         if (usingWhere) {
-            if (!SqlConstant.INSERT.equals(operateType)) {
+            if (!SqlConstant.INSERT.equals(operateType) && !SqlConstant.UPDATE.equals(operateType)) {
                 sb.append(" ").append(SqlConstant.WHERE);
             }
 
@@ -214,14 +223,14 @@ class SqlConstant {
 
     public static final String COMMA = ",";
 
-    public static final String SQL_FILE_NAME = "wuhui-2020071010384-1";
+    public static final String SQL_FILE_NAME = "wuhui-2020071010671-1";
 
     public static final String SQL_FILE_SUFFIX = ".sql";
 
     /**
      * 操作的表名
      */
-    public static final String TABLE_NAME = "productauditex";
+    public static final String TABLE_NAME = "productauditrequest";
 
     public static final int BUFFER_CAPACITY = 1024;
     /**

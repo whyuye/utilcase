@@ -8,16 +8,25 @@ public class ReflactiveTest {
 
     public static void main(String[] args) throws Exception {
 
-        Person person = new Person();
-        person.setName("testname");
+        Person newPerSon = new Person();
+        newPerSon.setAge(0);
+        Person oldPerson = new Person();
+        oldPerson.setName("testname");
+        oldPerson.setAge(0);
 
-        Class<?> personClass = person.getClass();
+        Class<?> personClass = newPerSon.getClass();
         Field[] fields = personClass.getDeclaredFields();
         for (Field field : fields) {
-            Object propertyData = getPropertyData(person, field.getName());
-            String testName = new String("testname");
+            System.out.println(field.getName());
+            Object afterValue = getPropertyData(newPerSon, field.getName());
+            if (afterValue == null) {
+                continue;
+            }
 
-            System.out.println(propertyData.equals(testName));
+            Object beforeValue = getBeforePropertyDataStr(oldPerson, field.getName());
+
+
+            System.out.println(afterValue.equals(beforeValue));
         }
 
     }
@@ -30,10 +39,25 @@ public class ReflactiveTest {
         fieldForm.setAccessible(true);
         return fieldForm.get(afterObj);
     }
+
+    private static String getBeforePropertyDataStr(Object afterObj, String propertyName) throws NoSuchFieldException, IllegalAccessException {
+        if (afterObj == null) {
+            return "";
+        }
+        Field fieldForm = afterObj.getClass().getDeclaredField(propertyName);
+        fieldForm.setAccessible(true);
+        Object resultObj = fieldForm.get(afterObj);
+        if (resultObj == null) {
+            return "";
+        }
+        return resultObj.toString();
+    }
 }
 
 @Data
 class Person {
 
     String name;
+
+    Integer age;
 }
