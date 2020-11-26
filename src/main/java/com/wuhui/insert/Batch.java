@@ -31,7 +31,7 @@ public class Batch {
             // System.out.println(createSql(ltIdPrefix, gtIdPrefix, UPDATE, true));
             // System.out.println(createSql(ltIdPrefix, gtIdPrefix, SELECT, true));
             // System.out.println(createSql(ltIdPrefix, gtIdPrefix, SqlConstant.INSERT, true));
-            String sql = createSql(ltIdPrefix, gtIdPrefix, SqlConstant.UPDATE, true);
+            String sql = createSql(ltIdPrefix, gtIdPrefix, SqlConstant.INSERT, true);
             if (sql != null && !"".equals(sql.trim())) {
                 writeToChannel(buffer, channel, sql);
                 // 为下一次put做准备
@@ -110,14 +110,14 @@ public class Batch {
                     .append(SqlConstant.TABLE_NAME);
         }
         if (SqlConstant.INSERT.equals(operateType)) {
-            sb.append("insert into \n" +
+            sb.append("replace into \n" +
                             "\t`productauditex`(id, product_id, change_data_type, user_id_create, user_name_create, user_id_update, user_name_update, time_create, time_update, time_pass_process) \n" +
                             "select \n" +
-                            "\tUUID(), product_id, 8, user_id_create, user_name_create, user_id_update, user_name_update, time_create, time_create, 0 \n" +
+                            "\tUUID(), product_id, 5, user_id_create, user_name_create, user_id_update, user_name_update, time_create, time_create, 0 \n" +
                             "from \n" +
                             "\t`productauditex` \n" +
                             "where \n" +
-                            "\t`change_data_type` = 4 and");
+                            "\t`change_data_type` = 2 and");
         }
 
         // where
@@ -158,7 +158,7 @@ public class Batch {
                 .append(SqlConstant.REQUEST_OPT_DB)
                 .append("\n")
                 .append("3.请求执行时间: ")
-                .append("yyyy-MM-DD HH:mm")
+                .append("2020-09-01 21:00")
                 .append("\n")
                 .append("4.验证人员: ")
                 .append("@author")
@@ -203,7 +203,7 @@ class SqlConstant {
 
     public static char[] MAP = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
-    public static final String REQUEST_PURPOSE = "新增商品建档拓展订货合规审核完成记录";
+    public static final String REQUEST_PURPOSE = "新增商品建档拓展图文合规审核完成记录";
 
     public static final String REQUEST_OPT_DB = "pupu_main";
 
@@ -223,7 +223,7 @@ class SqlConstant {
 
     public static final String COMMA = ",";
 
-    public static final String SQL_FILE_NAME = "wuhui-2020071010671-1";
+    public static final String SQL_FILE_NAME = "wuhui-202009012100-2";
 
     public static final String SQL_FILE_SUFFIX = ".sql";
 
