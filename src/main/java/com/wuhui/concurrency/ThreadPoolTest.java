@@ -14,9 +14,9 @@ import java.util.stream.IntStream;
 public class ThreadPoolTest {
 
     public static void main(String[] args) {
-        ExecutorService executor = createSumDataThreadPoolExecutor();
+        ThreadPoolExecutor threadPoolExecutor = createSumDataThreadPoolExecutor();
         IntStream.range(0, 100).forEach(i -> {
-            executor.execute(() -> {
+            threadPoolExecutor.execute(() -> {
                 System.out.println(i);
                 if (i <= 20) {
                     try {
@@ -27,11 +27,12 @@ public class ThreadPoolTest {
                 }
             });
         });
+        System.out.println(threadPoolExecutor.getActiveCount());
         // 这边shutdown了，在队列中的任务还能执行。
-        executor.shutdown();
+        threadPoolExecutor.shutdown();
     }
 
-    private static ExecutorService createSumDataThreadPoolExecutor() {
+    private static ThreadPoolExecutor createSumDataThreadPoolExecutor() {
         final int corePoolSize = Runtime.getRuntime().availableProcessors();
         final int maxPoolSize = Runtime.getRuntime().availableProcessors();
         return new ThreadPoolExecutor(corePoolSize, maxPoolSize, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue(10),

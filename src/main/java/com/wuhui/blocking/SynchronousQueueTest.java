@@ -2,7 +2,7 @@ package com.wuhui.blocking;
 
 import java.util.concurrent.SynchronousQueue;
 
-public class SynchrousQueueTest {
+public class SynchronousQueueTest {
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -21,10 +21,10 @@ public class SynchrousQueueTest {
             try {
                 Integer take1 = noCapacityBlockingQueue.poll(); // peek这个会返回null，因为对于SynchronousQueue来说它是没有容量的
                 System.out.println("1消费者取到了数据:" + take1);
-                Integer take2 = noCapacityBlockingQueue.remove();// 消费完了就返回null了
+                Integer take2 = noCapacityBlockingQueue.remove();// 消费完了poll就返回null了，如果数据不存在会抛出异常
                 System.out.println("1消费者取到了数据:" + take2);
             } catch (Exception e) {
-                System.out.println("消费者线程被中断" + e);  // java.util.NoSuchElementException
+                System.out.println("消费者线程被中断" + e);  // java.util.NoSuchElementException(使用remove的时候，如果阻塞队列中没有数据会抛出异常)
             }
         }, "消费者");
 

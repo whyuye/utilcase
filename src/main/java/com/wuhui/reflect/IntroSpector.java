@@ -21,6 +21,18 @@ public class IntroSpector {
             System.out.println(pd.getReadMethod() == null ? null : pd.getReadMethod().getName());
             System.out.println("-------------");
         }
+
+        System.out.println("===============SEPARATOR================");
+        BeanInfo info2 = Introspector.getBeanInfo(IntroSpectorBeanChild.class, Object.class, Introspector.IGNORE_ALL_BEANINFO);
+        PropertyDescriptor[] pds2 = info2.getPropertyDescriptors();// 取得属性描述器
+        for (PropertyDescriptor pd : pds2) {
+            System.out.println(pd.getName());
+            System.out.println(pd.getPropertyType());
+            System.out.println(pd.getPropertyType() == String.class);
+            System.out.println(pd.getWriteMethod() == null ? null : pd.getWriteMethod().getName());
+            System.out.println(pd.getReadMethod() == null ? null : pd.getReadMethod().getName());
+            System.out.println("-------------");
+        }
     }
 }
 
@@ -34,3 +46,22 @@ class IntroSpectorBean {
 
     String beanName;
 }
+
+@Setter
+@Getter
+class IntroSpectorBeanBase {
+
+    int basicTypeNum;
+
+    Integer primitiveTypeNum;
+
+    String beanName;
+}
+
+@Setter
+@Getter
+class IntroSpectorBeanChild extends IntroSpectorBeanBase {
+
+    String childName;
+}
+

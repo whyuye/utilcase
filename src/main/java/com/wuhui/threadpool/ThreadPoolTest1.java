@@ -11,7 +11,7 @@ public class ThreadPoolTest1 {
     public static void main(String[] args) {
         Integer coreSize = 1;
         // Integer maxSize = 1;
-        Integer maxSize = 3;
+        Integer maxSize = 2;
         Integer queueSize = 0;
         ThreadPoolSimpleProperties.ThreadPoolSimplePropertiesBuilder  builder =
                 new ThreadPoolSimpleProperties.ThreadPoolSimplePropertiesBuilder(coreSize, maxSize, queueSize);

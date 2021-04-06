@@ -4,13 +4,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class ReadProductIdFileToSqlFile {
 
-    public static void main(String[] args) throws Exception {
-        // 读取txt文件。txt文件的每一行为 productid box_regulation(带有单位的整箱箱规)
-        String path = ReadProductIdFileToSqlFile.class.getClassLoader()
-                .getResource("1010384.txt").getPath();
+    /**
+     * SELECT `id` FROM `pupu_main`.`products` WHERE `is_weigh_buy` = 0 AND `is_show_weigh_buy` = 1
+     * UPDATE `pupu_main`.`products` SET `is_show_weigh_buy_price` = 0 WHERE `id` = '' and `is_weigh_buy` = 0 and `is_show_weigh_buy` = 1;
+     *
+     * @param args
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException {
+        // 读取txt文件。txt文件的每一行为 productid
+        String path = ReadProductIdFileToSqlFile.class.getClassLoader().getResource("productid.txt").getPath();
 
         FileReader fr = new FileReader(path);
         BufferedReader br = new BufferedReader(fr);
@@ -23,42 +30,44 @@ public class ReadProductIdFileToSqlFile {
 
         FileWriter writer = new FileWriter(outputFile);
 
+        int executeCount = 0;
         String str;
         while ((str = br.readLine()) != null) {
+            // 每执行1000条update。sleep一会儿
+            if (executeCount != 0 && executeCount % 50 == 0) {
+                String selectSleepSql = createSelectSleepSql();
+                writer.write(selectSleepSql);
+            }
+
             String productId = str;
 
-            String updateSql = createUpdateProductAuditSql(productId);
+            String updateSql = createUpdateSql(productId);
 
-            String deleteSql = createDeleteProductAuditExSql(productId);
-
-            writer.write(deleteSql);
             writer.write(updateSql);
+
+            // 增加执行次数
+            executeCount++;
         }
 
         writer.close();
         br.close();
     }
 
-    /**
-     * #更新订货合规为待审核
-     * update `productaudit` set `purchase_compliance_status` = 1 where `product_id` = ''
-     *
-     * @param productId
-     * @return
-     */
-
-    private static String createUpdateProductAuditSql(String productId) {
-        return "update `productaudit` set `purchase_compliance_status` = 1 where `product_id` = '" + productId + "';\n";
+    private static String createSelectSleepSql() {
+        return "SELECT SLEEP(2);\n";
     }
 
-    /**
-     * #删除订货合规审核的完成记录
-     * delete from `productauditex` where `product_id` = '' and `change_data_type` = 8
-     *
-     * @param productId
-     * @return
-     */
-    private static String createDeleteProductAuditExSql(String productId) {
-        return "delete from `productauditex` where `product_id` = '" + productId + "' and `change_data_type` = 8;\n";
+    private static String createUpdateSql(String productId) {
+        // UPDATE `pupu_main`.`products` SET `is_show_weigh_buy_price` = 0 WHERE `product_id` = '' and `is_weigh_buy` = 0 and `is_show_weigh_buy` = 1;
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("UPDATE `products` SET `is_show_weigh_buy_price` = ")
+                .append(0)
+                .append(" WHERE `id` = '")
+                .append(productId)
+                .append("' and `is_weigh_buy` = 0")
+                .append(" and `is_show_weigh_buy_price` = 1;\n");
+
+        return builder.toString();
     }
 }
